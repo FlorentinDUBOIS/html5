@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="node_modules/material-design-lite/material.min.css">
     <link rel="stylesheet" href="stylesheets/main.css">
   </head>
 
@@ -64,6 +64,23 @@
           <div class="mdl-card card-canvas mdl-shadow--2dp">
             <canvas width="848" height="600"></canvas>
 
+            <div id="list" class="mdl-card__actions" hidden >
+              <ul class="mdl-list">
+                <li class="mdl-list__item">
+                  <span class="mdl-list__item-primary-content">
+                    <i class="material-icons mdl-list__item-icon">location_on</i>
+                    <span id="position"></span>
+                  </span>
+                </li>
+
+                <li class="mdl-list__item">
+                  <span class="mdl-list__item-primary-content">
+                    <i class="material-icons mdl-list__item-icon">today</i>
+                    <span id="date" ></span>
+                  </span>
+                </li>
+            </div>
+
             <div class="mdl-card__actions mdl-card--border">
               <button id="reset" class="mdl-button mdl-button--colored mdl-button--accent mdl-js-button mdl-js-ripple-effect" disabled>
                 Reset
@@ -87,7 +104,10 @@
     <video hidden></video>
 
     <!-- include material-design-lite scripts -->
-    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <script defer src="node_modules/material-design-lite/material.min.js"></script>
+
+    <!-- Include Dexie -->
+    <script src="node_modules/dexie/dist/dexie.min.js"></script>
 
     <!-- ours scripts -->
     <script src="scripts/camera.js"></script>

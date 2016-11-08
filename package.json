@@ -1,0 +1,16 @@
+{
+  "name": "html5",
+  "version": "1.0.0",
+  "description": "Another HTML 5 API demo",
+  "main": "index.js",
+  "repository": {
+    "url": "git@gitlab.com:FlorentinDUBOIS/html5.git",
+    "type": "git"
+  },
+  "author": "Florentin DUBOIS <contact@florentin-dubois.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "dexie": "^1.5.1",
+    "material-design-lite": "^1.2.1"
+  }
+}

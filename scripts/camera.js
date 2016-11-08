@@ -5,13 +5,24 @@ var Camera = (function() {
   var _shoot = window.document.querySelector('#shoot');
   var _reset = window.document.querySelector('#reset');
   var _save = window.document.querySelector('#save');
+  var _position = window.document.querySelector('#position');
+  var _date = window.document.querySelector('#date');
+  var _list = window.document.querySelector('#list');
   var context = canvas.getContext('2d');
   var picture = null;
   var streaming = false;
+  var db = new Dexie('cameraStore');
+
+  db.version(1).stores({
+    images: 'latitude,longitude,date,src'
+  });
+
+  db.open().catch(handleError);
+
   navigator.getUserMedia = (
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
+    navigator.mediaDevices.getUserMedia ||
     navigator.msGetUserMedia
   );
 
@@ -26,16 +37,16 @@ var Camera = (function() {
   _shoot.removeEventListener('click', handleShoot);
   _shoot.addEventListener('click', handleShoot);
 
-  _reset.removeEventListener('click', reset);
-  _reset.addEventListener('click', reset);
+  _reset.removeEventListener('click', handleReset);
+  _reset.addEventListener('click', handleReset);
 
-  _save.removeEventListener('click', save);
-  _save.addEventListener('click', save);
+  _save.removeEventListener('click', handleSave);
+  _save.addEventListener('click', handleSave);
 
   return {
     shoot: shoot,
-    setPicture: setPicture,
-    getPicture: getPicture
+    reset: reset,
+    save: save
   };
 
   /////////////////
@@ -103,7 +114,7 @@ var Camera = (function() {
    * handle shoot
    * @param {Event} event click on button shoot
    */
-  function handleShoot(Event) {
+  function handleShoot(event) {
     if(!event.defaultPrevented) {
       event.preventDefault();
 
@@ -140,12 +151,19 @@ var Camera = (function() {
    * handle the click of button reset
    * @param {Event} event click event
    */
-  function reset(event) {
+  function handleReset(event) {
     if(!event.defaultPrevented) {
       event.preventDefault();
 
-      setPicture(null);
+      reset();
     }
+  }
+
+  /**
+   * reset
+   */
+  function reset() {
+    setPicture(null);
   }
 
   /**
@@ -158,9 +176,13 @@ var Camera = (function() {
     if(data) {
       _reset.removeAttribute('disabled');
       _save.removeAttribute('disabled');
+      _list.removeAttribute('hidden');
+      _date.innerText = data.date.toString();
+      _position.innerText = data.position.coords.longitude + ';' + data.position.coords.latitude;
     } else {
       _reset.setAttribute('disabled', 'disabled');
       _save.setAttribute('disabled', 'disabled');
+      _list.setAttribute('hidden', 'hidden');
     }
   }
 
@@ -175,28 +197,24 @@ var Camera = (function() {
    * save in local storage
    * @param {Event} event click on the button save
    */
-  function save(event) {
+  function handleSave(event) {
     if(!event.defaultPrevented) {
       event.preventDefault();
 
-      try {
-        var pictures = JSON.parse(window.localStorage.getItem('pictures'));
-        if(!pictures) {
-          pictures = [];
-        }
-
-        var data = getPicture();
-        pictures.push({
-          latitude: data.position.coords.latitude,
-          longitude: data.position.coords.longitude,
-          date: data.date.toString(),
-          image: data.image.src
-        });
-
-        window.localStorage.setItem('pictures', JSON.stringify(pictures));
-      } catch(error) {
-        handleError(error);
-      }
+      save(getPicture());
     }
+  }
+
+  /**
+   * save
+   * @param {any} data object with data to save
+   */
+  function save(data) {
+    db.images.put({
+      latitude: data.position.coords.latitude,
+      longitude: data.position.coords.longitude,
+      date: data.date,
+      src: data.image.src
+    }).catch(handleError);
   }
 } ());
