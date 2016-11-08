@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i">
     <link rel="stylesheet" href="node_modules/material-design-lite/material.min.css">
+    <!--<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
     <link rel="stylesheet" href="stylesheets/main.css">
   </head>
 
@@ -31,8 +33,7 @@
               <h2 class="mdl-card__title-text">Welcome</h2>
             </div>
             <div class="mdl-card__supporting-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Mauris sagittis pellentesque lacus eleifend lacinia...
+              Hi! This prove of concept was develop to test HTML 5 API. &lt;&gt; with &lt;3 host by <a href="https://gitlab.com/FlorentinDUBOIS/html5">GitLab</a>.
             </div>
             <div class="mdl-card__actions mdl-card--border">
               <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
@@ -51,8 +52,7 @@
               <h2 class="mdl-card__title-text">Update</h2>
             </div>
             <div class="mdl-card__supporting-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Aenan convallis.
+              My software never has bugs. It just develops random features.
             </div>
             <div class="mdl-card__actions mdl-card--border">
               <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
@@ -96,6 +96,10 @@
               </button>
             </div>
           </div>
+
+          <div class="mdl-card card-canvas mdl-shadow--2dp">
+            <div id="map"></div>
+          </div>
         </div>
       </main>
     </div>
@@ -105,6 +109,10 @@
 
     <!-- include material-design-lite scripts -->
     <script defer src="node_modules/material-design-lite/material.min.js"></script>
+
+    <!-- include leaflet -->
+    <!--<script src="node_modules/leaflet/dist/leaflet.js"></script>-->
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 
     <!-- Include Dexie -->
     <script src="node_modules/dexie/dist/dexie.min.js"></script>

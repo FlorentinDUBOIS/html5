@@ -8,13 +8,15 @@ var Camera = (function() {
   var _position = window.document.querySelector('#position');
   var _date = window.document.querySelector('#date');
   var _list = window.document.querySelector('#list');
+  var _map = window.document.querySelector('#map');
+  var map = L.map('map');
   var context = canvas.getContext('2d');
   var picture = null;
   var streaming = false;
   var db = new Dexie('cameraStore');
 
   db.version(1).stores({
-    images: 'latitude,longitude,date,src'
+    images: 'date,longitude,latitude,src'
   });
 
   db.open().catch(handleError);
@@ -61,6 +63,9 @@ var Camera = (function() {
 
       canvas.setAttribute('width', card.offsetWidth);
       canvas.setAttribute('height', card.offsetWidth * 0.70754);
+
+      _map.style.width = card.offsetWidth + 'px';
+      _map.style.height = (card.offsetWidth * 0.70754) + 'px';
     }
   }
 
@@ -103,6 +108,12 @@ var Camera = (function() {
       if (streaming) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
       }
+
+      context.beginPath();
+      context.arc(canvas.width / 2, canvas.height / 2, canvas.width / 8, 0, 2 * Math.PI);
+      context.lineWidth = 1;
+      context.strokeStyle = 'red';
+      context.stroke();
     } else {
       context.drawImage(getPicture().image, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
     }
@@ -138,6 +149,11 @@ var Camera = (function() {
         context.drawImage(video, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
         image.src = canvas.toDataURL();
 
+        notify({
+          title: 'Snapshot',
+          body: 'Successfully took picture'
+        });
+
         resolve({
           position: position,
           image: image,
@@ -172,17 +188,23 @@ var Camera = (function() {
    */
   function setPicture(data) {
     picture = data;
-
     if(data) {
       _reset.removeAttribute('disabled');
       _save.removeAttribute('disabled');
       _list.removeAttribute('hidden');
+      _map.parentNode.removeAttribute('hidden');
       _date.innerText = data.date.toString();
       _position.innerText = data.position.coords.longitude + ';' + data.position.coords.latitude;
+
+      map.setView([
+        data.position.coords.longitude,
+        data.position.coords.latitude
+      ], 13);
     } else {
       _reset.setAttribute('disabled', 'disabled');
       _save.setAttribute('disabled', 'disabled');
       _list.setAttribute('hidden', 'hidden');
+      // _map.parentNode.setAttribute('hidden', 'hidden');
     }
   }
 
@@ -210,11 +232,35 @@ var Camera = (function() {
    * @param {any} data object with data to save
    */
   function save(data) {
-    db.images.put({
-      latitude: data.position.coords.latitude,
-      longitude: data.position.coords.longitude,
-      date: data.date,
-      src: data.image.src
-    }).catch(handleError);
+    db
+      .images
+      .put({
+        latitude: data.position.coords.latitude,
+        longitude: data.position.coords.longitude,
+        date: data.date,
+        src: data.image.src
+      })
+      .catch(handleError)
+      .then(function() {
+        notify({
+          title: 'Saved!',
+          body: 'Successfully saved the image'
+        });
+      });
+}
+
+  /**
+   * notify
+   * @param {any} message notification
+   */
+  function notify(message) {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        new Notification(message.title, {
+          body: message.body,
+          icon: message.icon
+        });
+      }
+    });
   }
 } ());

@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "dexie": "^1.5.1",
+    "leaflet": "^1.0.1",
     "material-design-lite": "^1.2.1"
   }
 }
