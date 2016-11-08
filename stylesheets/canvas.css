@@ -1,0 +1,13 @@
+.card-canvas {
+  width: 848px;
+}
+
+.card-canvas > .mdl-card__actions {
+  display: flex;
+
+  flex-direction: row;
+}
+
+.card-canvas > .mdl-card__actions > span {
+  flex: 1;
+}

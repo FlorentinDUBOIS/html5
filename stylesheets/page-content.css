@@ -1,0 +1,15 @@
+.page-content {
+  display: flex;
+
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-self: flex-start;
+
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-content > .mdl-card {
+  margin: 8px;
+}
