@@ -8,7 +8,7 @@ var Camera = (function() {
   var _position = window.document.querySelector('#position');
   var _date = window.document.querySelector('#date');
   var _list = window.document.querySelector('#list');
-  var _map = window.document.querySelector('#map');
+  var _map = window.document.querySelector('.map-container');
   var map = L.map('map').setView([48.4083867,-4.5696402], 12);
   var context = canvas.getContext('2d');
   var picture = null;
@@ -18,7 +18,7 @@ var Camera = (function() {
   navigator.getUserMedia = (
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
-    navigator.mediaDevices.getUserMedia ||
+    navigator.mozGetUserMedia ||
     navigator.msGetUserMedia
   );
 
