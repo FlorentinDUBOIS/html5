@@ -9,17 +9,11 @@ var Camera = (function() {
   var _date = window.document.querySelector('#date');
   var _list = window.document.querySelector('#list');
   var _map = window.document.querySelector('#map');
-  var map = L.map('map');
+  var map = L.map('map').setView([48.4083867,-4.5696402], 12);
   var context = canvas.getContext('2d');
   var picture = null;
   var streaming = false;
   var db = new Dexie('cameraStore');
-
-  db.version(1).stores({
-    images: 'date,longitude,latitude,src'
-  });
-
-  db.open().catch(handleError);
 
   navigator.getUserMedia = (
     navigator.getUserMedia ||
@@ -27,6 +21,28 @@ var Camera = (function() {
     navigator.mediaDevices.getUserMedia ||
     navigator.msGetUserMedia
   );
+
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  db.version(1).stores({
+    images: 'date,longitude,latitude,src'
+  });
+
+  db
+    .open()
+    .catch(handleError)
+    .then(function() {
+      db.images.each(function(image) {
+        addImageToMap(
+          image.latitude,
+          image.longitude,
+          image.src,
+          image.date
+        );
+      });
+    });
 
   window.removeEventListener('resize', resizeHandler);
   window.addEventListener('resize', resizeHandler);
@@ -45,6 +61,8 @@ var Camera = (function() {
   _save.removeEventListener('click', handleSave);
   _save.addEventListener('click', handleSave);
 
+  window.setTimeout(resizeHandler, 1000);
+
   return {
     shoot: shoot,
     reset: reset,
@@ -58,15 +76,17 @@ var Camera = (function() {
    * @param {Event} event event object that is create
    */
   function resizeHandler(event) {
-    if(!event.defaultPrevented) {
-      event.preventDefault();
-
-      canvas.setAttribute('width', card.offsetWidth);
-      canvas.setAttribute('height', card.offsetWidth * 0.70754);
-
-      _map.style.width = card.offsetWidth + 'px';
-      _map.style.height = (card.offsetWidth * 0.70754) + 'px';
+    if(event) {
+      if(!event.defaultPrevented) {
+        event.preventDefault();
+      }
     }
+
+    canvas.setAttribute('width', card.offsetWidth);
+    canvas.setAttribute('height', card.offsetWidth * 0.70754);
+
+    _map.style.width = card.offsetWidth + 'px';
+    _map.style.height = (card.offsetWidth * 0.70754) + 'px';
   }
 
   /**
@@ -111,6 +131,19 @@ var Camera = (function() {
 
       context.beginPath();
       context.arc(canvas.width / 2, canvas.height / 2, canvas.width / 8, 0, 2 * Math.PI);
+
+      context.moveTo(canvas.width * 2/8, canvas.height * 4/8);
+      context.lineTo(canvas.width * 3/8, canvas.height * 4/8);
+
+      context.moveTo(canvas.width * 5/8, canvas.height * 4/8);
+      context.lineTo(canvas.width * 6/8, canvas.height * 4/8);
+
+      context.moveTo(canvas.width * 4/8, canvas.height * 2.58/8);
+      context.lineTo(canvas.width * 4/8, canvas.height * 1.58/8);
+
+      context.moveTo(canvas.width * 4/8, canvas.height * 5.4/8);
+      context.lineTo(canvas.width * 4/8, canvas.height * 6.4/8);
+
       context.lineWidth = 1;
       context.strokeStyle = 'red';
       context.stroke();
@@ -192,19 +225,12 @@ var Camera = (function() {
       _reset.removeAttribute('disabled');
       _save.removeAttribute('disabled');
       _list.removeAttribute('hidden');
-      _map.parentNode.removeAttribute('hidden');
       _date.innerText = data.date.toString();
       _position.innerText = data.position.coords.longitude + ';' + data.position.coords.latitude;
-
-      map.setView([
-        data.position.coords.longitude,
-        data.position.coords.latitude
-      ], 13);
     } else {
       _reset.setAttribute('disabled', 'disabled');
       _save.setAttribute('disabled', 'disabled');
       _list.setAttribute('hidden', 'hidden');
-      // _map.parentNode.setAttribute('hidden', 'hidden');
     }
   }
 
@@ -232,6 +258,13 @@ var Camera = (function() {
    * @param {any} data object with data to save
    */
   function save(data) {
+    addImageToMap(
+      data.position.coords.latitude,
+      data.position.coords.longitude,
+      data.image.src,
+      data.date
+    );
+
     db
       .images
       .put({
@@ -262,5 +295,38 @@ var Camera = (function() {
         });
       }
     });
+  }
+
+  /**
+   * add an image to map
+   * @param {number} latitude latitude
+   * @param {number} longitude longitude
+   * @param {string} src source
+   * @param {Date} date date
+   */
+  function addImageToMap(latitude, longitude, src, date) {
+    L.marker([
+      latitude,
+      longitude
+    ])
+    .bindPopup(
+      L.popup()
+       .setLatLng(L.latLng(
+          latitude,
+          longitude
+       ))
+       .setContent(
+         '<div style="width: 300px; height: 240px">' +
+            '<img style="width: 100%; height: auto" src="' + src + '" />' +
+            '<p> Date: ' + date + '<p>' +
+         '</div>'
+       )
+    )
+    .addTo(map);
+
+    map.setView([
+      latitude,
+      longitude
+    ], 13);
   }
 } ());
