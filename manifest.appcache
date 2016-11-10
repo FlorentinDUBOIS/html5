@@ -1,21 +1,21 @@
 CACHE MANIFEST
 # v1.0.2
-/index.html
-/stylesheets/canvas.css
-/stylesheets/dog.css
-/stylesheets/list.css
-/stylesheets/main.css
-/stylesheets/map.css
-/stylesheets/page-content.css
-/stylesheets/welcome-card.css
-/scripts/camera.js
-/images/dog.png
-/images/welcome-card.jpg
-/node_modules/material-design-lite/material.min.css
-/node_modules/leaflet/dist/leaflet.css
-/node_modules/material-design-lite/material.min.js
-/node_modules/leaflet/dist/leaflet.js
-/node_modules/dexie/dist/dexie.min.js
+index.html
+stylesheets/canvas.css
+stylesheets/dog.css
+stylesheets/list.css
+stylesheets/main.css
+stylesheets/map.css
+stylesheets/page-content.css
+stylesheets/welcome-card.css
+scripts/camera.js
+images/dog.png
+images/welcome-card.jpg
+node_modules/material-design-lite/material.min.css
+node_modules/leaflet/dist/leaflet.css
+node_modules/material-design-lite/material.min.js
+node_modules/leaflet/dist/leaflet.js
+node_modules/dexie/dist/dexie.min.js
 
 NETWORK:
 *
