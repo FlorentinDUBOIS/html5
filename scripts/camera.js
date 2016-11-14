@@ -217,7 +217,7 @@ var Camera = (function() {
 
   /**
    * set the picture to show
-   * @param {any} image image to show
+   * @param {any} image to show
    */
   function setPicture(data) {
     picture = data;
