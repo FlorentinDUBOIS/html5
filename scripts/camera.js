@@ -132,19 +132,19 @@ var Camera = (function() {
       context.beginPath();
       context.arc(canvas.width / 2, canvas.height / 2, canvas.width / 8, 0, 2 * Math.PI);
 
-      context.moveTo(canvas.width * 2/8, canvas.height * 4/8);
-      context.lineTo(canvas.width * 3/8, canvas.height * 4/8);
+      context.moveTo(canvas.width * 3/8, canvas.height * 4/8);
+      context.lineTo(canvas.width * 3/8 - 50, canvas.height * 4/8);
 
       context.moveTo(canvas.width * 5/8, canvas.height * 4/8);
-      context.lineTo(canvas.width * 6/8, canvas.height * 4/8);
+      context.lineTo(canvas.width * 5/8 + 50, canvas.height * 4/8);
 
       context.moveTo(canvas.width * 4/8, canvas.height * 2.58/8);
-      context.lineTo(canvas.width * 4/8, canvas.height * 1.58/8);
+      context.lineTo(canvas.width * 4/8, canvas.height * 2.58/8 - 50);
 
       context.moveTo(canvas.width * 4/8, canvas.height * 5.4/8);
-      context.lineTo(canvas.width * 4/8, canvas.height * 6.4/8);
+      context.lineTo(canvas.width * 4/8, canvas.height * 5.4/8 + 50);
 
-      context.lineWidth = 1;
+      context.lineWidth = 2;
       context.strokeStyle = 'red';
       context.stroke();
     } else {
@@ -225,12 +225,14 @@ var Camera = (function() {
       _reset.removeAttribute('disabled');
       _save.removeAttribute('disabled');
       _list.removeAttribute('hidden');
-      _date.innerText = data.date.toString();
+      _date.innerText = new Date(data.date).toLocaleString(navigator.language);
+      _save.setAttribute('href', picture.image.src);
       _position.innerText = data.position.coords.longitude + ';' + data.position.coords.latitude;
     } else {
       _reset.setAttribute('disabled', 'disabled');
       _save.setAttribute('disabled', 'disabled');
       _list.setAttribute('hidden', 'hidden');
+      _save.removeAttribute('href');
     }
   }
 
@@ -246,11 +248,7 @@ var Camera = (function() {
    * @param {Event} event click on the button save
    */
   function handleSave(event) {
-    if(!event.defaultPrevented) {
-      event.preventDefault();
-
-      save(getPicture());
-    }
+    save(getPicture());
   }
 
   /**
@@ -291,7 +289,7 @@ var Camera = (function() {
       if (permission === 'granted') {
         new Notification(message.title, {
           body: message.body,
-          icon: message.icon
+          icon: 'data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAy8vLAAEDAAAROkkABAAAAAACBgAFAwAAIVJsALOliAAFAwkAT/T3AJTK/wAcTewAsOzvAB5I7wAfTuYA0LeiAHr6/wAnU+MAJ1HmABtHVQDHgAAA6+b3AMh9CQDm9/QA3d3dACNMWwArVfsA+e3oAO/w+gB+dHYAAAABAPLz8QA8X28ALmbmAPP09AAAAgcABAABAPT09ADg3eYABQABAEvy+wBNeY8AAQIQAAcACgD3+foAAAsQAOHn8gA8a+wA/f39AF/1+wAsUecAYfX7ADBfcAAkRlMA7+/vAL2yngDu8/IAbPT4AMC0mwDKysoAAAACAAEAAgArY/AAAAUIAAMEBQCJfmgAxLunALamjQD8/PsA+v3+AKjK7wAzWmsAau/zAO/o9gAGPUwAOv36AKfY/gAAAAMAxNXIAAACAADDtJwAAQMDADJp6AAJAgkABAUSACRO4AATSFIAvKWLAJF+aQD8/PwA/vz8AKWafQAgUfsAm5ubACFEWAApT/UAv+/yAOzu7gCj1PwAvbCaACBf+ADv8/QAAAAEALHS/wAGAAQABgIBAC5q7AAHAgEAHk3eAPf39wDN9/gAmc3xAAcHBwDp6ekAGUdZAJOEagAdS1MAL0ztAC1U6gC4s6QANU3nAAACAgCwn40AttfrABVN6AAtYfYAsqGKAAQCAgAHAAUAn87jAFd3jQC7pocA+fv7APv7+wCmvP4AJUzuANbW1gCampoA3vb/ANr//wAkR1EAv7KZAKyihQCas/YAAAEAAAAEAAAAAAYAAAUDAAQBAACupogAHUfgAAUBAAAACgAABwEAAAEECQAHBAAA8/v8ACJI7AD4+/wAzfv9ABhBUgAsReMA/vr5ACNR7ADm5PcAGEZYAB1EUgD///8ALE7sAGH2+gAoY/UA9/DuAAEBAQCwooYAAwIEAAAIBAAwYvIAGkjtAOPj4wAJBQQAHU/nAAgJBwAVRFMAH2FzAAwIBAD++P0AJVPhAP77/QDV1dUApKCBAGLz+wAfRFwAZfX4ABgLDQApVP8ARniKAMK1mwDv9/IAAAECAAMBAgC2oYQABwECAJqQfwDf6vAA5urnAP7+/gDg8vYA//7+AChU5QCdh24AwvX3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAqDFyiQAqB3M+X06IJBlaqKg8XooAoaaNyrASXW2ST6gxAYpeAIM1Hpl5DH6rMFDOqM6zvQC+0lnDh8wYJ2XRZ6jOMaitxLi/YH27a4sipJOoqIZxrVgQf56sSs0ckA+Tzm6bdEI7OMu1pVaxP1MbkzeTfENkUZUoEy8WHWbPopMJp0jHtrkLgrIzqQ52d5cfVzaTugCdFWhNFy1jJWmBAMg9xiMAr4AhVZxBwFSfRs5bqJTCdbcDSQpLFBooeryo0ECgKxHBOqoyNClMLHAAqJFhb5p4j5YIhMlcewJHDa2t01IgtI7Fxa6uRAaFLoytqAWjYiZsbGpqmASoOUUAqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
         });
       }
     });
@@ -318,7 +316,7 @@ var Camera = (function() {
        .setContent(
          '<div style="width: 300px; height: 240px">' +
             '<img style="width: 100%; height: auto" src="' + src + '" />' +
-            '<p> Date: ' + date + '<p>' +
+            '<p> Date: ' + new Date(date).toLocaleString(navigator.language) + '<p>' +
          '</div>'
        )
     )
